@@ -80,148 +80,115 @@
     <!--from here we put this script -->
     		<script>
     document.addEventListener('DOMContentLoaded', function () {
-        var validateButton = document.getElementById('validateButton');
-        var terminalIdField = document.querySelector('input[name="payment_fena_api"]');
-        var terminalSecretField = document.querySelector('input[name="payment_fena_secret"]');
-		var bankDropdown = document.querySelector('select[name="payment_fena_bank"]');  // Get the bank dropdown element
-		var selectedBank = document.querySelector('input[name="payment_fena_bank_id"]');
-		var SelectedName = document.querySelector('input[name="payment_fena_bank_name"]');
+    var validateButton = document.getElementById('validateButton');
+    var terminalIdField = document.querySelector('input[name="payment_fena_api"]');
+    var terminalSecretField = document.querySelector('input[name="payment_fena_secret"]');
+    var bankDropdown = document.querySelector('select[name="payment_fena_bank"]');  
+    var selectedBank = document.querySelector('input[name="payment_fena_bank_id"]');
+    var SelectedName = document.querySelector('input[name="payment_fena_bank_name"]');
         
-		var bankDetails = {};
+    var bankDetails = {};
 
-		if(terminalIdField.value && terminalSecretField.value){
+    if (terminalIdField.value && terminalSecretField.value) {
+        var terminalId = terminalIdField.value;
+        var secret = terminalSecretField.value;
+        var compare = selectedBank.value;
 
-			 var terminalId = terminalIdField.value;
-            var secret = terminalSecretField.value;
-            
-            var compare = selectedBank.value;
-
-            // Make the API request
-            fetch('https://epos.api.staging.fena.co/open/company/bank-accounts/list', {
-                headers: {
-                    'secret-key': secret,
-                    'integration-id': terminalId
-                }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not OK.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const verifiedBanks = data.data.filter(item => item.status === "verified");
-                const banks = {};
-                verifiedBanks.forEach(item => {
-                    banks[item.name] = item._id;
-                });
-				bankDetails = banks;
-
-
-				 bankDropdown.innerHTML = '';  // Clear the existing options
-
-                for (const bankName in banks) {
-                    const option = document.createElement('option');
-                    option.value = banks[bankName];
-                    option.textContent = bankName;
-                    bankDropdown.appendChild(option);
-                }
-
-
-  if(compare){
-for (const option of bankDropdown.options) {
-    // Check if the option value matches the compare value
-    if (option.value === compare) {
-        // If there is a match, set the selected attribute
-        option.selected = true;
-    }
-}
-  }
-
-// Iterate through the options in the dropdown
-
-
-				
-
-                // Use the 'banks' data as needed
-                //console.log('Verified Banks:', banks);
-            })
-            .catch(error => {
-                console.error('API Request Error:', error);
+        // Make the API request
+        fetch('https://epos.api.staging.fena.co/open/company/bank-accounts/list', {
+            headers: {
+                'secret-key': secret,
+                'integration-id': terminalId
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not OK.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const verifiedBanks = data.data.docs.filter(item => item.status === "verified");
+            const banks = {};
+            verifiedBanks.forEach(item => {
+                banks[item.name] = item.id;
             });
+            bankDetails = banks;
 
+            bankDropdown.innerHTML = '';  
 
-		}
-		else{
-			alert('You need to enter terminalId and secret then validate it');
-		}
+            for (const bankName in banks) {
+                const option = document.createElement('option');
+                option.value = banks[bankName];
+                option.textContent = bankName;
+                bankDropdown.appendChild(option);
+            }
 
-        
-        validateButton.addEventListener('click', function () {
-            var terminalId = terminalIdField.value;
-            var secret = terminalSecretField.value;
-            
-
-
-            // Make the API request
-            fetch('https://epos.api.staging.fena.co/open/company/bank-accounts/list', {
-                headers: {
-                    'secret-key': secret,
-                    'integration-id': terminalId
+            if (compare) {
+                for (const option of bankDropdown.options) {
+                    if (option.value === compare) {
+                        option.selected = true;
+                    }
                 }
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not OK.');
-                }
-                return response.json();
-            })
-            .then(data => {
-                const verifiedBanks = data.data.filter(item => item.status === "verified");
-                const banks = {};
-                verifiedBanks.forEach(item => {
-                    banks[item.name] = item._id;
-                });
-				bankDetails = banks;
-
-				 bankDropdown.innerHTML = '';  // Clear the existing options
-
-                for (const bankName in banks) {
-                    const option = document.createElement('option');
-                    option.value = banks[bankName];
-                    option.textContent = bankName;
-                    bankDropdown.appendChild(option);
-                }
-				
-				            // Display the Terminal ID and Secret in an alert
-            alert("TerminalId and Secrect Validated Successfully");
-                // Use the 'banks' data as needed
-                //console.log('Verified Banks:', banks);
-            })
-            .catch(error => {
-                console.error('API Request Error:', error);
-            });
+            }
+        })
+        .catch(error => {
+            console.error('API Request Error:', error);
         });
+    } else {
+        alert('You need to enter terminalId and secret then validate it');
+    }
 
+    validateButton.addEventListener('click', function () {
+        var terminalId = terminalIdField.value;
+        var secret = terminalSecretField.value;
 
-		
-		bankDropdown.addEventListener('change', function handleChange(event) {
-         selected    =   event.target.value;
-		     var selectedOptionIndex = event.target.selectedIndex;
-    var selectedBankName = event.target.options[selectedOptionIndex].text;
-	
-         //const selectedBankId = bankDetails[selected];
+        // Make the API request
+        fetch('https://epos.api.staging.fena.co/open/company/bank-accounts/list', {
+            headers: {
+                'secret-key': secret,
+                'integration-id': terminalId
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not OK.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            const verifiedBanks = data.data.docs.filter(item => item.status === "verified");
+            const banks = {};
+            verifiedBanks.forEach(item => {
+                banks[item.name] = item.id;
+            });
+            bankDetails = banks;
 
+            bankDropdown.innerHTML = '';  
 
-		selectedBank.value = selected;
-		SelectedName.value = selectedBankName;
-
-		 console.log(name);
-		 });
-		
-
-
+            for (const bankName in banks) {
+                const option = document.createElement('option');
+                option.value = banks[bankName];
+                option.textContent = bankName;
+                bankDropdown.appendChild(option);
+            }
+            
+            alert("TerminalId and Secret Validated Successfully");
+        })
+        .catch(error => {
+            console.error('API Request Error:', error);
+        });
     });
+
+    bankDropdown.addEventListener('change', function handleChange(event) {
+        selected = event.target.value;
+        var selectedOptionIndex = event.target.selectedIndex;
+        var selectedBankName = event.target.options[selectedOptionIndex].text;
+
+        selectedBank.value = selected;
+        SelectedName.value = selectedBankName;
+    });
+});
 </script>
 
           <div class="row mb-3">

@@ -45,7 +45,7 @@ class Fena extends \Opencart\System\Engine\Model
             if ($fenaMode == 1) {
                 $url = 'https://epos.api.staging.fena.co/open/company/bank-accounts/list';
             } else {
-                $url = 'https://epos.api.fena.co/open/company/bank-accounts/list';
+                $url = 'https://epos.api.staging.fena.co/open/company/bank-accounts/list';
             }
 
             $response = $this->sendCurl($url, $request);

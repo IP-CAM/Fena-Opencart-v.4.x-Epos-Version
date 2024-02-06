@@ -100,7 +100,7 @@ class Fena extends \Opencart\System\Engine\Controller
                 if ($fenaMode == 1) {
                     $url = 'https://epos.api.staging.fena.co/open/payments/single/create-and-process';
                 } else {
-                    $url = 'https://epos.api.fena.co/open/payments/single/create-and-process';
+                    $url = 'https://epos.api.staging.fena.co/open/payments/single/create-and-process';
                 }
 
                 $deliveryAddress = array(
